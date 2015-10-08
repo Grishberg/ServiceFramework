@@ -93,15 +93,15 @@ public abstract class BaseBinderService extends Service {
     }
 
     protected void sendFeedMessage() {
-        Intent intent = new Intent(Const.SERVICE_ACTION_FEED_RESPONSE);
+        Intent intent = new Intent(Const.SERVICE_ACTION_TASK_DONE);
         LocalBroadcastManager.getInstance(this).
                 sendBroadcast(intent);
     }
 
     protected void sendAuthMessage(String accessToken, String userName, String userProfile) {
         Intent intent = new Intent(Const.SERVICE_ACTION_AUTH);
-        intent.putExtra(Const.EXTRA_ACCESS_TOKEN, accessToken);
-        intent.putExtra(Const.EXTRA_USER_NAME, userName);
+        intent.putExtra(Const.EXTRA_TASK_TAG, accessToken);
+        intent.putExtra(Const.EXTRA_TASK_ID, userName);
         intent.putExtra(Const.EXTRA_USER_PICTURE, userProfile);
         LocalBroadcastManager.getInstance(this).
                 sendBroadcast(intent);

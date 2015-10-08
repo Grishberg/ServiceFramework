@@ -10,14 +10,18 @@ import java.util.concurrent.Future;
 
 import info.goodline.framework.service.BaseThreadPoolService;
 
+/**
+ * Test worker service
+ */
 public class TestService extends BaseThreadPoolService {
     private static final String TAG = TestService.class.getSimpleName();
+
     public TestService() {
     }
 
-    public void startThread(int priority, int id){
-        Log.d(TAG, "on start thread id=" + id+" priority="+priority);
-        TestRunnable runnable = new TestRunnable(priority, id);
-        Future future = mExecutor.submit(runnable);
+    public int startThread(String tag, int priority, int id) {
+        Log.d(TAG, "schedule thread id=" + id + " priority=" + priority);
+        TestRunnable runnable = new TestRunnable(this, tag, priority, id);
+        return startManagedTask(runnable, tag);
     }
 }

@@ -1,6 +1,5 @@
 package info.goodline.framework.activities;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import info.goodline.framework.Const;
 import info.goodline.framework.service.BaseBinderService;
+import info.goodline.framework.service.BaseThreadPoolService;
 
 /**
  * Created by g on 07.10.15.
@@ -54,7 +54,7 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mIntent = getServiceIntent();
         mLocalBroadcast = new IntentFilter(Const.SERVICE_ACTION_AUTH);
-        mLocalBroadcast.addAction(Const.SERVICE_ACTION_FEED_RESPONSE);
+        mLocalBroadcast.addAction(Const.SERVICE_ACTION_TASK_DONE);
         mIsFirstBind = true;
         registerBroadcast();
 
@@ -112,19 +112,22 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
         }
     }
 
+    protected boolean cancelTask(String tag){
+        if(!mIsBound) return false;
+        ((BaseThreadPoolService)mService).cancelTaskQueue(tag);
+        return true;
+    }
+
+    protected boolean cancelTask(String tag, int id){
+        if(!mIsBound) return false;
+        ((BaseThreadPoolService)mService).cancelTaskQueue(tag, id);
+        return true;
+    }
+
     protected void onBound() {
     }
 
-    protected void onResponseAccessToken(String accessToken, String username, String userAvatar) {
-
-    }
-
-    protected void onGetFeedResponse() {
-
-    }
-
-    protected void onImageLoaded(long id){
-
+    protected void onTaskDone(String tag, int taskId){
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -132,18 +135,11 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
 
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case Const.SERVICE_ACTION_FEED_RESPONSE:
-                    onGetFeedResponse();
+                case Const.SERVICE_ACTION_TASK_DONE:
+                    String tag = intent.getStringExtra(Const.EXTRA_TASK_TAG);
+                    int id = intent.getIntExtra(Const.EXTRA_TASK_ID, -1);
+                    onTaskDone(tag, id);
                     break;
-                case Const.SERVICE_ACTION_AUTH:
-                    String accessToken = intent.getStringExtra(Const.EXTRA_ACCESS_TOKEN);
-                    String userName = intent.getStringExtra(Const.EXTRA_USER_NAME);
-                    String userPic = intent.getStringExtra(Const.EXTRA_USER_PICTURE);
-                    onResponseAccessToken(accessToken, userName, userPic);
-                    break;
-                case Const.SERVICE_ACTION_IMAGE_LOADED:
-                    long id = intent.getLongExtra(Const.EXTRA_IMAGE_ID, 0);
-                    onImageLoaded(id);
             }
         }
     };
