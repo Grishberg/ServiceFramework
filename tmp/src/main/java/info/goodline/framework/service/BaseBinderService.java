@@ -23,6 +23,7 @@ public abstract class BaseBinderService extends Service {
     public BaseBinderService() {
         mBindersCount = 0;
         mShutdownHandler = new Handler();
+        mBinder = new ApiServiceBinder();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package info.goodline.framework.test;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,9 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import info.goodline.framework.R;
+import java.util.Random;
 
-public class MainActivity extends AppCompatActivity
+import info.goodline.framework.R;
+import info.goodline.framework.activities.BaseBinderActivity;
+
+public class MainActivity extends BaseBinderActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,28 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+    @Override
+    protected void onFirstBound() {
+        super.onFirstBound();
+        final Random random = new Random();
+        TestService service = (TestService) mService;
+        for(int i = 0; i< 100; i++){
+            int priority = (int) (Math.random() * 100);
+            service.startThread(priority, i);
+        }
+    }
+
+    @Override
+    protected Intent getServiceIntent() {
+        return new Intent(this, TestService.class);
+    }
+
+    @Override
+    protected void onBound() {
+        super.onBound();
     }
 
     @Override

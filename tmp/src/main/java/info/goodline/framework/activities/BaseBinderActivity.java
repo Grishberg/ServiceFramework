@@ -24,11 +24,16 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
     private boolean mIsBroadcasRegistered;
     private IntentFilter mLocalBroadcast;
     protected BaseBinderService mService;
+    private boolean mIsFirstBind = true;
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mIsBound = true;
             mService = ((BaseBinderService.ApiServiceBinder) service).getService();
+            if(mIsFirstBind){
+                mIsFirstBind = false;
+                onFirstBound();
+            }
             onBound();
         }
 
@@ -38,6 +43,10 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
         }
     };
 
+    protected void onFirstBound(){
+
+    }
+
     protected abstract Intent getServiceIntent();
 
     @Override
@@ -46,6 +55,7 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
         mIntent = getServiceIntent();
         mLocalBroadcast = new IntentFilter(Const.SERVICE_ACTION_AUTH);
         mLocalBroadcast.addAction(Const.SERVICE_ACTION_FEED_RESPONSE);
+        mIsFirstBind = true;
         registerBroadcast();
 
         bindToService();

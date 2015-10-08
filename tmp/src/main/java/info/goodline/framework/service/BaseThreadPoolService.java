@@ -4,6 +4,7 @@ import android.util.SparseArray;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RunnableFuture;
@@ -20,7 +21,7 @@ import info.goodline.framework.multithreading.PriorityRunnable;
 public abstract class BaseThreadPoolService extends BaseBinderService
         implements ThreadObserver {
     private static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-    protected static final int CORE_POOL_SIZE = NUMBER_OF_CORES * 2;
+    protected static final int CORE_POOL_SIZE = NUMBER_OF_CORES ;
     protected volatile Map<String, SparseArray<Future>> mTaskQueue;
     protected ThreadPoolExecutor mExecutor;
 
@@ -32,8 +33,19 @@ public abstract class BaseThreadPoolService extends BaseBinderService
     public static ThreadPoolExecutor getPriorityExecutor(int nThreads) {
         return new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS,
                 new PriorityBlockingQueue<Runnable>(10, PriorityFuture.COMP)) {
+            @Override
+            protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
+                RunnableFuture newTaskFor = super.newTaskFor((PriorityRunnable)runnable, value);
+                //return super.newTaskFor(runnable, value);
+                return new PriorityFuture(newTaskFor, ((PriorityRunnable) runnable).getPriority());
+            }
 
-            protected RunnableFuture newTaskFor(Runnable runnable) {
+            @Override
+            protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
+                return super.newTaskFor(callable);
+            }
+
+            protected <T> RunnableFuture<T>  newTaskFor(Runnable runnable) {
                 RunnableFuture newTaskFor = super.newTaskFor(runnable, null);
                 return new PriorityFuture(newTaskFor, ((PriorityRunnable) runnable).getPriority());
             }
@@ -105,6 +117,15 @@ public abstract class BaseThreadPoolService extends BaseBinderService
                 }
             }
             mTaskQueue.remove(tag);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mExecutor != null){
+            mExecutor.shutdown();
+            mExecutor.shutdownNow();
         }
     }
 }
