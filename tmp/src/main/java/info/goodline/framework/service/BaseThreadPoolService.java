@@ -140,6 +140,7 @@ public abstract class BaseThreadPoolService extends BaseBinderService
     @Override
     public void onDestroy() {
         super.onDestroy();
+        cancelAll();
         if (mExecutor != null) {
             mExecutor.shutdown();
             mExecutor.shutdownNow();
