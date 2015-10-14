@@ -53,8 +53,8 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIntent = getServiceIntent();
-        mLocalBroadcast = new IntentFilter(Const.SERVICE_ACTION_AUTH);
-        mLocalBroadcast.addAction(Const.SERVICE_ACTION_TASK_DONE);
+        mLocalBroadcast = new IntentFilter(Const.SERVICE_ACTION_TASK_DONE);
+        mLocalBroadcast.addAction(Const.SERVICE_ACTION_TASK_FAIL);
         mIsFirstBind = true;
         registerBroadcast();
 
@@ -118,6 +118,13 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
         return true;
     }
 
+    protected boolean delaylTask(String tag){
+        if(!mIsBound) return false;
+        ((BaseThreadPoolService)mService).delayTaskQueue(tag);
+        return true;
+    }
+
+
     protected boolean cancelTask(String tag, int id){
         if(!mIsBound) return false;
         ((BaseThreadPoolService)mService).cancelTaskQueue(tag, id);
@@ -127,18 +134,31 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
     protected void onBound() {
     }
 
-    protected void onTaskDone(String tag, int taskId){
+    protected void onTaskDone(String tag, int taskId, int code){
+    }
+
+    protected void onTaskFail(String tag, int taskId, int code){
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
 
         public void onReceive(Context context, Intent intent) {
+            String tag;
+            int id;
+            int code;
             switch (intent.getAction()) {
                 case Const.SERVICE_ACTION_TASK_DONE:
-                    String tag = intent.getStringExtra(Const.EXTRA_TASK_TAG);
-                    int id = intent.getIntExtra(Const.EXTRA_TASK_ID, -1);
-                    onTaskDone(tag, id);
+                    tag = intent.getStringExtra(Const.EXTRA_TASK_TAG);
+                    id = intent.getIntExtra(Const.EXTRA_TASK_ID, -1);
+                    code = intent.getIntExtra(Const.EXTRA_TASK_CODE, -1);
+                    onTaskDone(tag, id, code);
+                    break;
+                case Const.SERVICE_ACTION_TASK_FAIL:
+                    tag = intent.getStringExtra(Const.EXTRA_TASK_TAG);
+                    id = intent.getIntExtra(Const.EXTRA_TASK_ID, -1);
+                    code = intent.getIntExtra(Const.EXTRA_TASK_CODE, -1);
+                    onTaskFail(tag, id, code);
                     break;
             }
         }

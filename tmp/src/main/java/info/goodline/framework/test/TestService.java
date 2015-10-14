@@ -8,6 +8,8 @@ import android.util.SparseArray;
 
 import java.util.concurrent.Future;
 
+import info.goodline.framework.Const;
+import info.goodline.framework.interfaces.ServiceThreadInteractionObserver;
 import info.goodline.framework.service.BaseThreadPoolService;
 
 /**
@@ -24,4 +26,5 @@ public class TestService extends BaseThreadPoolService {
         TestRunnable runnable = new TestRunnable(this, tag, priority, id);
         return startManagedTask(runnable, tag);
     }
+
 }

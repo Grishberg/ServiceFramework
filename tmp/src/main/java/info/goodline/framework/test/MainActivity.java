@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,6 +22,7 @@ import info.goodline.framework.activities.BaseBinderActivity;
 
 public class MainActivity extends BaseDrawerActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final String SCREEN_TAG = "";
     private int mFirstTaskId = -1;
 
@@ -32,8 +34,8 @@ public class MainActivity extends BaseDrawerActivity
         super.onFirstBound();
         final Random random = new Random();
         TestService service = (TestService) mService;
-        for (int i = 0; i < 1000; i++) {
-            int priority = (int) (Math.random() * 100);
+        for (int i = 0; i < 10; i++) {
+            int priority = (int) (Math.random() * 5) + 5;
             int taskId = service.startThread(SCREEN_TAG, priority, i);
             if (mFirstTaskId < 0) {
                 mFirstTaskId = taskId;
@@ -49,6 +51,13 @@ public class MainActivity extends BaseDrawerActivity
     @Override
     protected void onFabClicked() {
         super.onFabClicked();
-        cancelTask(SCREEN_TAG);
+        TestService service = (TestService) mService;
+        int taskId = service.startThread("newTask", 1, 555);
+        delaylTask(SCREEN_TAG);
+    }
+
+    @Override
+    protected void onTaskDone(String tag, int taskId, int code) {
+        Log.d(TAG, "        on task done tag=" + tag + " id=" + code);
     }
 }

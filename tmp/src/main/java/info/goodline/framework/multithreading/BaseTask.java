@@ -24,6 +24,14 @@ public abstract class BaseTask  implements PriorityRunnable  {
         mTaskId = taskId;
     }
 
+    public int getId() {
+        return mTaskId;
+    }
+
+    public ThreadObserver getThreadObserver() {
+        return mThreadObserver;
+    }
+
     @Override
     public int getPriority() {
         return mPriority;

@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+
+import java.io.Serializable;
 
 import info.goodline.framework.Const;
 
@@ -84,34 +87,42 @@ public abstract class BaseBinderService extends Service {
     /**
      * send message to activities
      */
-    protected void sendMessage(String action, int code, int id) {
-        Intent intent = new Intent(action);
-        intent.putExtra(Const.REST_SERVICE_RESPONSE_CODE_EXTRA, code);
-        intent.putExtra(Const.REST_SERVICE_RESPONSE_ID_EXTRA, id);
-        LocalBroadcastManager.getInstance(this).
-                sendBroadcast(intent);
-    }
-
-    protected void sendFeedMessage() {
+    public void sendMessage(int code, int id) {
         Intent intent = new Intent(Const.SERVICE_ACTION_TASK_DONE);
+        intent.putExtra(Const.EXTRA_TASK_CODE, code);
+        intent.putExtra(Const.EXTRA_TASK_ID, id);
         LocalBroadcastManager.getInstance(this).
                 sendBroadcast(intent);
     }
 
-    protected void sendAuthMessage(String accessToken, String userName, String userProfile) {
-        Intent intent = new Intent(Const.SERVICE_ACTION_AUTH);
-        intent.putExtra(Const.EXTRA_TASK_TAG, accessToken);
-        intent.putExtra(Const.EXTRA_TASK_ID, userName);
-        intent.putExtra(Const.EXTRA_USER_PICTURE, userProfile);
+    /**
+     * send message to activities
+     */
+    public void sendMessage(String action, int code, int id) {
+        Intent intent = new Intent(action);
+        intent.putExtra(Const.EXTRA_TASK_CODE, code);
+        intent.putExtra(Const.EXTRA_TASK_ID, id);
         LocalBroadcastManager.getInstance(this).
                 sendBroadcast(intent);
     }
 
-    protected void sendImageLoadedMessage(long id) {
-        Intent intent = new Intent(Const.SERVICE_ACTION_IMAGE_LOADED);
-        intent.putExtra(Const.EXTRA_IMAGE_ID, id);
+    public void sendMessage(String action, int code, Serializable data, int id) {
+        Intent intent = new Intent(action);
+        intent.putExtra(Const.EXTRA_TASK_SERIALIZABLE, data);
+        intent.putExtra(Const.EXTRA_TASK_CODE, code);
+        intent.putExtra(Const.EXTRA_TASK_ID, id);
         LocalBroadcastManager.getInstance(this).
                 sendBroadcast(intent);
     }
+
+    public void sendMessage(String action, int code, Parcelable data, int id) {
+        Intent intent = new Intent(action);
+        intent.putExtra(Const.EXTRA_TASK_PARCELABLE, data);
+        intent.putExtra(Const.EXTRA_TASK_CODE, code);
+        intent.putExtra(Const.EXTRA_TASK_ID, id);
+        LocalBroadcastManager.getInstance(this).
+                sendBroadcast(intent);
+    }
+
 }
 
