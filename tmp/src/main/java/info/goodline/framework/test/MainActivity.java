@@ -34,7 +34,7 @@ public class MainActivity extends BaseDrawerActivity
         super.onFirstBound();
         final Random random = new Random();
         TestService service = (TestService) mService;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             int priority = (int) (Math.random() * 5) + 5;
             int taskId = service.startThread(SCREEN_TAG, priority, i);
             if (mFirstTaskId < 0) {

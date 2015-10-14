@@ -6,6 +6,7 @@ import android.util.SparseArray;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -135,8 +136,10 @@ public abstract class BaseThreadPoolService extends BaseBinderService
     }
 
     public synchronized void cancelAll() {
-        for (String tag : mTaskQueue.keySet()) {
-            SparseArray<FutureContainer> queue = mTaskQueue.get(tag);
+        Iterator it = mTaskQueue.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, SparseArray<FutureContainer>> item = (Map.Entry<String, SparseArray<FutureContainer>>) it.next();
+            SparseArray<FutureContainer> queue = mTaskQueue.get(item.getKey());
             if (queue != null) {
                 for (int i = queue.size() - 1; i >= 0; i--) {
                     int key = queue.keyAt(i);
@@ -148,7 +151,7 @@ public abstract class BaseThreadPoolService extends BaseBinderService
                     queue.removeAt(i);
                 }
             }
-            mTaskQueue.remove(tag);
+            it.remove();
         }
     }
 
@@ -181,13 +184,11 @@ public abstract class BaseThreadPoolService extends BaseBinderService
     @Override
     public void onSuccess(int taskId, int code) {
         sendMessage(Const.SERVICE_ACTION_TASK_DONE, code, taskId);
-
     }
 
     @Override
     public void onSuccess(int taskId, Serializable data) {
         sendMessage(Const.SERVICE_ACTION_TASK_DONE, 0, data, taskId);
-
     }
 
     @Override
@@ -203,7 +204,6 @@ public abstract class BaseThreadPoolService extends BaseBinderService
     @Override
     public void onDestroy() {
         super.onDestroy();
-        cancelAll();
         if (mExecutor != null) {
             mExecutor.shutdown();
             mExecutor.shutdownNow();
@@ -214,5 +214,6 @@ public abstract class BaseThreadPoolService extends BaseBinderService
             } catch (InterruptedException e) {
             }
         }
+        cancelAll();
     }
 }
