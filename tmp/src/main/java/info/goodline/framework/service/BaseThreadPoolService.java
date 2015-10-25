@@ -83,15 +83,14 @@ public abstract class BaseThreadPoolService extends BaseBinderService
      * @param id
      */
     @Override
-    public synchronized void onTaskDone(String tag, int id) {
+    public synchronized void onTaskDone(String tag, int id, boolean isInterrupted) {
         SparseArray<FutureContainer> queue = mTaskQueue.get(tag);
         if (queue != null) {
             FutureContainer task = queue.get(id);
             if (task != null) {
-                if (!task.isDelayed) {
+                if (!isInterrupted) {
                     queue.remove(id);
                 } else {
-                    task.isDelayed = false;
                     Log.d(TAG, "task was delayed, need change flag");
                 }
             }

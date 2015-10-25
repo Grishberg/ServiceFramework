@@ -9,6 +9,7 @@ import android.util.SparseArray;
 import java.util.concurrent.Future;
 
 import info.goodline.framework.Const;
+import info.goodline.framework.interfaces.IBinderService;
 import info.goodline.framework.interfaces.ServiceThreadInteractionObserver;
 import info.goodline.framework.service.BaseThreadPoolService;
 

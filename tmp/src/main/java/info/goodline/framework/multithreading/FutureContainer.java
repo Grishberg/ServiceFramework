@@ -8,7 +8,6 @@ import java.util.concurrent.Future;
 public class FutureContainer {
     public Future future;
     public PriorityRunnable runnable;
-    public boolean isDelayed;
 
     public FutureContainer(Future future, PriorityRunnable runnable) {
         this.future = future;

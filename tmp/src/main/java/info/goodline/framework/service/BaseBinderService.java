@@ -8,15 +8,19 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.io.Serializable;
 
 import info.goodline.framework.Const;
+import info.goodline.framework.interfaces.IBindedService;
+import info.goodline.framework.interfaces.IBinderService;
 
 /**
  * Created by g on 07.10.15.
  */
-public abstract class BaseBinderService extends Service {
+public abstract class BaseBinderService extends Service implements IBinderService {
+    private static final String TAG = BaseBinderService.class.getSimpleName();
     private static final int SHUTDOWN_TIMER = 5000;
     private boolean mIsShutdowning;
     private Handler mShutdownHandler;
@@ -77,9 +81,15 @@ public abstract class BaseBinderService extends Service {
         }
     };
 
+    @Override
+    public void test() {
+        Log.d(TAG,"test");
+    }
+
     // service container for Activity
-    public class ApiServiceBinder extends Binder {
-        public BaseBinderService getService() {
+    public class ApiServiceBinder extends Binder implements IBindedService {
+        @Override
+        public IBinderService getService() {
             return BaseBinderService.this;
         }
     }

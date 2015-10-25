@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import info.goodline.framework.Const;
+import info.goodline.framework.interfaces.IBindedService;
 import info.goodline.framework.service.BaseBinderService;
 import info.goodline.framework.service.BaseThreadPoolService;
 
@@ -29,7 +30,7 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mIsBound = true;
-            mService = ((BaseBinderService.ApiServiceBinder) service).getService();
+            mService = (BaseBinderService)((IBindedService) service).getService();
             if(mIsFirstBind){
                 mIsFirstBind = false;
                 onFirstBound();

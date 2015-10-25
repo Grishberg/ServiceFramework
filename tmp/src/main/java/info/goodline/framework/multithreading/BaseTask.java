@@ -7,7 +7,7 @@ import info.goodline.framework.interfaces.ThreadObserver;
 /**
  * Created by g on 08.10.15.
  */
-public abstract class BaseTask  implements PriorityRunnable  {
+public abstract class BaseTask implements PriorityRunnable {
     private static final String TAG = BaseTask.class.getSimpleName();
     private ThreadObserver mThreadObserver;
     private String mTaskTag;
@@ -20,7 +20,7 @@ public abstract class BaseTask  implements PriorityRunnable  {
         mPriority = priority;
     }
 
-    public void setId(int taskId){
+    public void setId(int taskId) {
         mTaskId = taskId;
     }
 
@@ -37,17 +37,20 @@ public abstract class BaseTask  implements PriorityRunnable  {
         return mPriority;
     }
 
-    protected abstract void runTask();
+    protected abstract void runTask() throws InterruptedException;
 
     @Override
     public void run() {
-        runTask();
-        onDone();
+        boolean isInterrupted = false;
+        try {
+            runTask();
+        } catch (InterruptedException e) {
+            isInterrupted = true;
+        }
+        onDone(isInterrupted);
     }
 
-    protected void onDone(){
-        if(mThreadObserver != null){
-            mThreadObserver.onTaskDone(mTaskTag, mTaskId);
-        }
+    protected void onDone(boolean isInterrupted) {
+        mThreadObserver.onTaskDone(mTaskTag, mTaskId, isInterrupted);
     }
 }
