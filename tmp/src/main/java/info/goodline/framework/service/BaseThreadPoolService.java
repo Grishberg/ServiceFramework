@@ -164,7 +164,6 @@ public abstract class BaseThreadPoolService extends BaseBinderService
                 if (task != null && !task.future.isCancelled() && !task.future.isDone()) {
                     // если задача еще не выполнена, отменить
                     task.future.cancel(true);
-                    task.isDelayed = true;
                     mQueue.remove(task.runnable);
                     // и заново добавить в очередь
                     task.future = mExecutor.submit(task.runnable);

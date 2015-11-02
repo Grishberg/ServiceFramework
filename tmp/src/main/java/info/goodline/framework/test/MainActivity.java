@@ -19,6 +19,7 @@ import java.util.Random;
 
 import info.goodline.framework.R;
 import info.goodline.framework.activities.BaseBinderActivity;
+import info.goodline.framework.test.worker.TestWorker;
 
 public class MainActivity extends BaseDrawerActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,9 +35,10 @@ public class MainActivity extends BaseDrawerActivity
         super.onFirstBound();
         final Random random = new Random();
         TestService service = (TestService) mService;
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             int priority = (int) (Math.random() * 5) + 5;
-            int taskId = service.startThread(SCREEN_TAG, priority, i);
+            int taskId = service.startThread(TestWorker.makeGetPolicyRequest()
+                    , SCREEN_TAG, priority, i);
             if (mFirstTaskId < 0) {
                 mFirstTaskId = taskId;
             }
@@ -52,7 +54,8 @@ public class MainActivity extends BaseDrawerActivity
     protected void onFabClicked() {
         super.onFabClicked();
         TestService service = (TestService) mService;
-        int taskId = service.startThread("newTask", 1, 555);
+        int taskId = service.startThread(TestWorker.makeGetPolicyRequest()
+                , "newTask", 1, 555);
         delaylTask(SCREEN_TAG);
     }
 
