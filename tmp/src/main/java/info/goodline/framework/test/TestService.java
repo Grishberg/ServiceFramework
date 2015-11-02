@@ -16,6 +16,7 @@ import info.goodline.framework.interfaces.ServiceThreadInteractionObserver;
 import info.goodline.framework.rest.BaseRestRequest;
 import info.goodline.framework.rest.HttpLoggingInterceptor;
 import info.goodline.framework.service.BaseThreadPoolService;
+import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
 /**
@@ -39,6 +40,7 @@ public class TestService extends BaseThreadPoolService {
             final Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(RestConst.BASE_URL)
                     .client(client)
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
             pairService = retrofit.create(TestServiceApi.class);
