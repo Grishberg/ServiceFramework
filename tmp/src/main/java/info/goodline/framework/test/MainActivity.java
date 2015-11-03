@@ -21,6 +21,7 @@ import info.goodline.framework.R;
 import info.goodline.framework.activities.BaseBinderActivity;
 import info.goodline.framework.test.worker.RutrackerWorker;
 import info.goodline.framework.test.worker.TestWorker;
+import info.goodline.framework.test.worker.TvShowWorker;
 
 public class MainActivity extends BaseDrawerActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,9 +37,9 @@ public class MainActivity extends BaseDrawerActivity
         super.onFirstBound();
         final Random random = new Random();
         TestService service = (TestService) mService;
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 200; i++) {
             int priority = (int) (Math.random() * 5) + 5;
-            int taskId = service.startThread(RutrackerWorker.makeCatForumTreeRequest()
+            int taskId = service.startThread(TvShowWorker.makeRequest()
                     , SCREEN_TAG, priority, i);
             if (mFirstTaskId < 0) {
                 mFirstTaskId = taskId;

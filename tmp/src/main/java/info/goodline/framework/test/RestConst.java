@@ -9,4 +9,7 @@ public class RestConst {
 
     public static final String RUTRACKER_BASE_URL = "http://api.rutracker.org";
     public static final String CAT_FORUM_TREE = "/v1/static/cat_forum_tree";
+
+    public static final String TV_SHOW_END_POINT = "http://bolshoe.tv";
+    public static final String JSON_TV_ALL = "/jsontv/all.json";
 }

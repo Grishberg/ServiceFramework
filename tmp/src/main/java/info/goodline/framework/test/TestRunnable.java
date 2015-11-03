@@ -46,7 +46,7 @@ public class TestRunnable extends BaseTask {
             }*/
         } catch (InterruptedException | InterruptedIOException e) {
             isInterrupted = true;
-            Log.w(TAG, "thread id=" + mId + " interrupted exception");
+            Log.e(TAG, "thread id=" + mId + " interrupted exception");
         }
 
         if (!isInterrupted) {
