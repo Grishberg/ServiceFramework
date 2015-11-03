@@ -60,7 +60,7 @@ public class TestService extends BaseThreadPoolService {
     private void initTvShowService() {
         OkHttpClient client = new OkHttpClient();
         HttpSimpleLoggingInterceptor interceptor = new HttpSimpleLoggingInterceptor();
-        interceptor.setLevel(HttpSimpleLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(HttpSimpleLoggingInterceptor.Level.NONE);
         client.interceptors().add(interceptor);
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(RestConst.TV_SHOW_END_POINT)
