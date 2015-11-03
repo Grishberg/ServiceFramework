@@ -12,7 +12,7 @@ public abstract class BaseRestRequest<T, S> {
     public void init (S service){
         mService = service;
     }
-    public abstract Call<T> onRequest() throws BaseRestException;
+    public abstract Call<T> onRequest() throws BaseRestException, InterruptedException;
 
     // calls in new thread
     public void onSuccess(T response) {

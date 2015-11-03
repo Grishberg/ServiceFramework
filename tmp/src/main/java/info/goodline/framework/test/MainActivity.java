@@ -19,6 +19,7 @@ import java.util.Random;
 
 import info.goodline.framework.R;
 import info.goodline.framework.activities.BaseBinderActivity;
+import info.goodline.framework.test.worker.RutrackerWorker;
 import info.goodline.framework.test.worker.TestWorker;
 
 public class MainActivity extends BaseDrawerActivity
@@ -35,9 +36,9 @@ public class MainActivity extends BaseDrawerActivity
         super.onFirstBound();
         final Random random = new Random();
         TestService service = (TestService) mService;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             int priority = (int) (Math.random() * 5) + 5;
-            int taskId = service.startThread(TestWorker.makeGetPolicyRequest()
+            int taskId = service.startThread(RutrackerWorker.makeCatForumTreeRequest()
                     , SCREEN_TAG, priority, i);
             if (mFirstTaskId < 0) {
                 mFirstTaskId = taskId;
@@ -55,7 +56,7 @@ public class MainActivity extends BaseDrawerActivity
         super.onFabClicked();
         TestService service = (TestService) mService;
         int taskId = service.startThread(TestWorker.makeGetPolicyRequest()
-                , "newTask", 1, 555);
+                , "newTask", 1, 9999);
         delaylTask(SCREEN_TAG);
     }
 

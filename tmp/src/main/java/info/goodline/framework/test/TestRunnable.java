@@ -2,6 +2,8 @@ package info.goodline.framework.test;
 
 import android.util.Log;
 
+import java.io.InterruptedIOException;
+
 import info.goodline.framework.interfaces.ServiceThreadInteractionObserver;
 import info.goodline.framework.multithreading.BaseTask;
 import info.goodline.framework.rest.BaseRestRequest;
@@ -32,19 +34,19 @@ public class TestRunnable extends BaseTask {
         boolean isInterrupted = false;
         Object result = null;
         try {
-            result = executeRequest(mRequest);
-
             Log.d(TAG, "    run id=" + mId + " priority=" + getPriority());
-            for (int i = 0; i < 10; i++) {
+            result = executeRequest(mRequest);
+            Log.d(TAG, "    request done id=" + mId + " priority=" + getPriority());
+            /*for (int i = 0; i < 10; i++) {
                 Thread.sleep(1000);
                 if (Thread.currentThread().isInterrupted()) {
                     Log.d(TAG, "thread id=" + mId + " interrupted, need shutdown");
                     break;
                 }
-            }
-        } catch (InterruptedException e) {
+            }*/
+        } catch (InterruptedException | InterruptedIOException e) {
             isInterrupted = true;
-            Log.d(TAG, "thread id=" + mId + " interrupted exception");
+            Log.w(TAG, "thread id=" + mId + " interrupted exception");
         }
 
         if (!isInterrupted) {
@@ -52,7 +54,7 @@ public class TestRunnable extends BaseTask {
         }
     }
 
-    private Object executeRequest(BaseRestRequest request) {
+    private Object executeRequest(BaseRestRequest request) throws InterruptedException ,InterruptedIOException{
         Response result = null;
         for (int tries = 0; tries < TRIES_COUNT; tries++) {
             try {
@@ -71,7 +73,12 @@ public class TestRunnable extends BaseTask {
                 Log.e(TAG, "try " + tries + " error: " + e.getMessage());
                 request.onFail(e.getMessage(), e.getCode());
                 break;
-            } */ catch (Exception e) {
+            } */
+            catch (InterruptedException | InterruptedIOException e){
+                // resend IterruptedException
+                throw e;
+            }
+            catch (Exception e) {
                 Log.e(TAG, "try " + tries + " error: " + e.getMessage());
                 if (e.getMessage() == null) {
                     e.printStackTrace();
