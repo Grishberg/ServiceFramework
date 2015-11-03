@@ -1,9 +1,8 @@
-package info.goodline.framework.test;
+package info.goodline.framework.test.retrofit_services;
 
+import info.goodline.framework.test.models.TestModel;
 import retrofit.Call;
-import retrofit.http.Body;
 import retrofit.http.GET;
-import retrofit.http.POST;
 
 /**
  * Created by g on 02.11.15.

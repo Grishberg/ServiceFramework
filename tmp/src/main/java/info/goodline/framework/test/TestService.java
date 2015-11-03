@@ -1,21 +1,16 @@
 package info.goodline.framework.test;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.squareup.okhttp.OkHttpClient;
 
-import java.util.concurrent.Future;
-
-import info.goodline.framework.Const;
-import info.goodline.framework.interfaces.IBinderService;
-import info.goodline.framework.interfaces.ServiceThreadInteractionObserver;
 import info.goodline.framework.rest.BaseRestRequest;
-import info.goodline.framework.rest.HttpLoggingInterceptor;
+import info.goodline.framework.rest.HttpSimpleLoggingInterceptor;
 import info.goodline.framework.service.BaseThreadPoolService;
+import info.goodline.framework.test.retrofit_services.RutrackerServiceApi;
+import info.goodline.framework.test.retrofit_services.TestServiceApi;
+import info.goodline.framework.test.worker.RutrackerRequest;
+import info.goodline.framework.test.worker.TestRequest;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
@@ -24,32 +19,49 @@ import retrofit.Retrofit;
  */
 public class TestService extends BaseThreadPoolService {
     private static final String TAG = TestService.class.getSimpleName();
-    private TestServiceApi pairService;
+    private RutrackerServiceApi mRutrackerServiceApi;
+    private TestServiceApi mTestServiceApi;
 
     public TestService() {
-        initService();
+        initRutrackerService();
+        initTestService();
     }
 
-    private void initService() {
-        if (pairService == null) {
-
+    private void initRutrackerService() {
             OkHttpClient client = new OkHttpClient();
-            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            HttpSimpleLoggingInterceptor interceptor = new HttpSimpleLoggingInterceptor();
+            interceptor.setLevel(HttpSimpleLoggingInterceptor.Level.BODY);
             client.interceptors().add(interceptor);
             final Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RestConst.BASE_URL)
+                    .baseUrl(RestConst.RUTRACKER_BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
+            mRutrackerServiceApi = retrofit.create(RutrackerServiceApi.class);
+    }
 
-            pairService = retrofit.create(TestServiceApi.class);
-        }
+    private void initTestService() {
+        OkHttpClient client = new OkHttpClient();
+        HttpSimpleLoggingInterceptor interceptor = new HttpSimpleLoggingInterceptor();
+        interceptor.setLevel(HttpSimpleLoggingInterceptor.Level.BODY);
+        client.interceptors().add(interceptor);
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(RestConst.BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        mTestServiceApi = retrofit.create(TestServiceApi.class);
     }
 
     public int startThread(BaseRestRequest request, String tag, int priority, int id) {
         Log.d(TAG, "schedule thread id=" + id + " priority=" + priority);
-        TestRunnable runnable = new TestRunnable(pairService, request, this, tag, priority, id);
+        if(request instanceof TestRequest ){
+            request.init(mTestServiceApi);
+        } else if(request instanceof RutrackerRequest){
+            request.init(mRutrackerServiceApi);
+        }
+
+        TestRunnable runnable = new TestRunnable(request, this, tag, priority, id);
         return startManagedTask(runnable, tag);
     }
 }

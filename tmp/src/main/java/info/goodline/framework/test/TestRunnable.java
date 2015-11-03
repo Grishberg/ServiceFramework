@@ -2,15 +2,11 @@ package info.goodline.framework.test;
 
 import android.util.Log;
 
-import java.io.IOException;
-
 import info.goodline.framework.interfaces.ServiceThreadInteractionObserver;
-import info.goodline.framework.interfaces.ThreadObserver;
 import info.goodline.framework.multithreading.BaseTask;
-import info.goodline.framework.multithreading.PriorityRunnable;
 import info.goodline.framework.rest.BaseRestRequest;
-import retrofit.Call;
-import retrofit.Callback;
+import info.goodline.framework.test.retrofit_services.RutrackerServiceApi;
+import info.goodline.framework.test.retrofit_services.TestServiceApi;
 import retrofit.Response;
 
 /**
@@ -21,13 +17,13 @@ public class TestRunnable extends BaseTask {
     private static final String TAG = TestRunnable.class.getSimpleName();
     public static final int TRIES_COUNT = 5;
     private int mId;
-    private TestServiceApi mService;
     private BaseRestRequest mRequest;
 
-    public TestRunnable(TestServiceApi api, BaseRestRequest request, ServiceThreadInteractionObserver observer, String taskTag, int priority, int mId) {
+    public TestRunnable(BaseRestRequest request
+            , ServiceThreadInteractionObserver observer
+            , String taskTag, int priority, int mId) {
         super(observer, taskTag, priority);
         this.mId = mId;
-        mService = api;
         mRequest = request;
     }
 
@@ -60,7 +56,7 @@ public class TestRunnable extends BaseTask {
         Response result = null;
         for (int tries = 0; tries < TRIES_COUNT; tries++) {
             try {
-                result = request.onRequest(mService).execute();
+                result = request.onRequest().execute();
                 request.onSuccess(result.body());
                 return result.body();
             }/*

@@ -1,4 +1,4 @@
-package info.goodline.framework.test;
+package info.goodline.framework.test.models;
 
 import java.io.Serializable;
 import java.util.List;

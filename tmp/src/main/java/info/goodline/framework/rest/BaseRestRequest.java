@@ -8,7 +8,11 @@ import retrofit.Call;
  * Created by g on 25.10.15.
  */
 public abstract class BaseRestRequest<T, S> {
-    public abstract Call<T> onRequest(S service) throws BaseRestException;
+    protected S mService;
+    public void init (S service){
+        mService = service;
+    }
+    public abstract Call<T> onRequest() throws BaseRestException;
 
     // calls in new thread
     public void onSuccess(T response) {
