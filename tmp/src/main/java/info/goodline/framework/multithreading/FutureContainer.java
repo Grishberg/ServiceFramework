@@ -4,6 +4,7 @@ import java.util.concurrent.Future;
 
 /**
  * Created by g on 13.10.15.
+ * container for tasks
  */
 public class FutureContainer {
     public Future future;

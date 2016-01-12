@@ -8,6 +8,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Created by g on 06.10.15.
+ * container for runnable with priority for sorting
  */
 public class PriorityFuture<T> implements RunnableFuture<T> {
 

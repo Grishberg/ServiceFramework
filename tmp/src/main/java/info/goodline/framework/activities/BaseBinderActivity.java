@@ -12,25 +12,24 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import info.goodline.framework.Const;
-import info.goodline.framework.interfaces.IBindedService;
 import info.goodline.framework.service.BaseBinderService;
 import info.goodline.framework.service.BaseThreadPoolService;
 
 /**
  * Created by g on 07.10.15.
  */
-public abstract class BaseBinderActivity extends AppCompatActivity {
+public abstract class BaseBinderActivity <T extends BaseThreadPoolService> extends AppCompatActivity {
     private boolean mIsBound;
     private Intent mIntent;
-    private boolean mIsBroadcasRegistered;
+    private boolean mIsBroadcastRegistered;
     private IntentFilter mLocalBroadcast;
-    protected BaseBinderService mService;
+    protected T mService;
     private boolean mIsFirstBind = true;
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mIsBound = true;
-            mService = (BaseBinderService)((IBindedService) service).getService();
+            mService = (T) service;
             if(mIsFirstBind){
                 mIsFirstBind = false;
                 onFirstBound();
@@ -84,18 +83,18 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
     }
 
     private void registerBroadcast() {
-        if (!mIsBroadcasRegistered) {
+        if (!mIsBroadcastRegistered) {
             LocalBroadcastManager.getInstance(this).registerReceiver(
                     mMessageReceiver, mLocalBroadcast);
-            mIsBroadcasRegistered = true;
+            mIsBroadcastRegistered = true;
         }
     }
 
     private void unregisterBroadcast() {
-        if (mIsBroadcasRegistered) {
+        if (mIsBroadcastRegistered) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(
                     mMessageReceiver);
-            mIsBroadcasRegistered = false;
+            mIsBroadcastRegistered = false;
         }
     }
 
@@ -164,4 +163,15 @@ public abstract class BaseBinderActivity extends AppCompatActivity {
             }
         }
     };
+
+    /**
+     * send messages to service
+     * @param code
+     */
+    private void sendMessageToService(int code){
+        Intent intent = new Intent(Const.ACTIVITY_ACTION);
+        intent.putExtra(Const.EXTRA_TASK_CODE, code);
+        LocalBroadcastManager.getInstance(this).
+                sendBroadcast(intent);
+    }
 }

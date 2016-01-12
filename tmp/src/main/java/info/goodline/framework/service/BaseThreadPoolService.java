@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import info.goodline.framework.Const;
 import info.goodline.framework.interfaces.ServiceThreadInteractionObserver;
-import info.goodline.framework.interfaces.ThreadObserver;
 import info.goodline.framework.multithreading.BaseTask;
 import info.goodline.framework.multithreading.FutureContainer;
 import info.goodline.framework.multithreading.PriorityFuture;
@@ -48,7 +47,6 @@ public abstract class BaseThreadPoolService extends BaseBinderService
             @Override
             protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
                 RunnableFuture newTaskFor = super.newTaskFor((PriorityRunnable) runnable, value);
-                //return super.newTaskFor(runnable, value);
                 return new PriorityFuture(newTaskFor, ((PriorityRunnable) runnable).getPriority());
             }
 
@@ -64,8 +62,18 @@ public abstract class BaseThreadPoolService extends BaseBinderService
         };
     }
 
+    /**
+     * add new task to pool and generate task ID for checking result
+     *
+     * @param task
+     * @param tag
+     * @return
+     */
     public int startManagedTask(BaseTask task, String tag) {
         int id = mTaskId++;
+        if (mTaskId == Integer.MAX_VALUE) {
+            mTaskId = 0;
+        }
         task.setId(id);
         Future future = mExecutor.submit(task);
         SparseArray<FutureContainer> queue = mTaskQueue.get(tag);
@@ -137,7 +145,8 @@ public abstract class BaseThreadPoolService extends BaseBinderService
     public synchronized void cancelAll() {
         Iterator it = mTaskQueue.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, SparseArray<FutureContainer>> item = (Map.Entry<String, SparseArray<FutureContainer>>) it.next();
+            Map.Entry<String, SparseArray<FutureContainer>> item =
+                    (Map.Entry<String, SparseArray<FutureContainer>>) it.next();
             SparseArray<FutureContainer> queue = mTaskQueue.get(item.getKey());
             if (queue != null) {
                 for (int i = queue.size() - 1; i >= 0; i--) {
@@ -191,7 +200,7 @@ public abstract class BaseThreadPoolService extends BaseBinderService
 
     @Override
     public void onSuccess(int taskId, Parcelable data) {
-        sendMessage(Const.SERVICE_ACTION_TASK_DONE, 0, data, taskId);
+        sendMessageWithParcel(Const.SERVICE_ACTION_TASK_DONE, 0, data, taskId);
     }
 
     @Override
