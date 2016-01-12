@@ -1,5 +1,6 @@
 package info.goodline.framework.activities;
 
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,7 +19,7 @@ import info.goodline.framework.service.BaseThreadPoolService;
 /**
  * Created by g on 07.10.15.
  */
-public abstract class BaseBinderActivity <T extends BaseThreadPoolService> extends AppCompatActivity {
+public abstract class BaseBinderActivity <T extends Service> extends AppCompatActivity {
     private boolean mIsBound;
     private Intent mIntent;
     private boolean mIsBroadcastRegistered;
