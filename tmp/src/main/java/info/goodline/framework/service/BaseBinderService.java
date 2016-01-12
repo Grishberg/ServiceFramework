@@ -61,8 +61,8 @@ public abstract class BaseBinderService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        registerBroadcast();
         mLocalBroadcast = new IntentFilter(Const.ACTIVITY_ACTION);
+        registerBroadcast();
     }
 
     @Override
