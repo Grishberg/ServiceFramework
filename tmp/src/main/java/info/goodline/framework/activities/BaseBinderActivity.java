@@ -29,7 +29,7 @@ public abstract class BaseBinderActivity <T extends BaseThreadPoolService> exten
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mIsBound = true;
-            mService = (T) service;
+            mService = (T) ((BaseBinderService.ApiServiceBinder) service).getService();
             if(mIsFirstBind){
                 mIsFirstBind = false;
                 onFirstBound();

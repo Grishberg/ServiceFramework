@@ -21,7 +21,7 @@ import info.goodline.framework.activities.BaseBinderActivity;
 /**
  * Created by g on 08.10.15.
  */
-public abstract class BaseDrawerActivity extends BaseBinderActivity
+public abstract class BaseDrawerActivity extends BaseBinderActivity<TestService>
         implements NavigationView.OnNavigationItemSelectedListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +48,9 @@ public abstract class BaseDrawerActivity extends BaseBinderActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
-    protected void onFabClicked(){
+    protected void onFabClicked() {
 
     }
 
